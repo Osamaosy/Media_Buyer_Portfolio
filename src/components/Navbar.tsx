@@ -6,12 +6,12 @@ const Navbar = () => {
   const [activeLink, setActiveLink] = useState('');
 
   const navItems = [
-    { label: 'الرئيسية', href: '#home', ar: 'الرئيسية' },
-    { label: 'عني', href: '#عني', ar: 'عني' },
-    { label: 'الخدمات', href: '#الخدمات', ar: 'الخدمات' },
-    { label: 'البورتفوليو', href: '#البورتفوليو', ar: 'البورتفوليو' },
-    { label: 'النتائج', href: '#النتائج', ar: 'النتائج' },
-    { label: 'تواصل', href: '#تواصل', ar: 'تواصل' },
+    { label: 'Home', href: '#home', ar: 'Home' },
+    { label: 'About', href: '#about', ar: 'About' },
+    { label: 'Services', href: '#services', ar: 'Services' },
+    { label: 'Portfolio', href: '#portfolio', ar: 'Portfolio' },
+    { label: 'Results', href: '#results', ar: 'Results' },
+    { label: 'Contact', href: '#contact', ar: 'Contact' },
   ];
 
   const handleNavClick = (href: string) => {
@@ -25,17 +25,15 @@ const Navbar = () => {
         {/* Main Navbar Container */}
         <div className="flex justify-between items-center h-20">
           {/* Logo & Brand */}
-          <div className="flex items-center space-x-5 space-x-reverse group cursor-pointer">
+          <div className="flex items-center space-x-5 group cursor-pointer">
             <div className="w-12 h-12 bg-gradient-to-br from-blue-500 via-blue-600 to-purple-600 rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-blue-500/50 transition-all duration-300 transform group-hover:scale-110">
               <span className="text-white font-bold text-lg">EM</span>
             </div>
-            <div className="flex flex-col text-right">
-              <span className="text-white font-extrabold text-lg tracking-tight">الهام محمد</span>
+            <div className="flex flex-col text-left">
+              <span className="text-white font-extrabold text-lg tracking-tight">Elham Mohamed</span>
               <span className="text-xs text-blue-400 font-semibold">Media Buyer Pro</span>
             </div>
           </div>
-
-
 
           {/* Desktop Menu */}
           <div className="hidden lg:flex items-center space-x-1">
@@ -59,10 +57,10 @@ const Navbar = () => {
           {/* CTA Button - Desktop */}
           <div className="hidden lg:block">
             <a
-              href="#تواصل"
+              href="#contact"
               className="px-6 py-2.5 bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold rounded-lg hover:shadow-lg hover:shadow-blue-500/50 transition-all duration-300 transform hover:scale-105"
             >
-              ابدأ الآن
+              Get Started
             </a>
           </div>
 
@@ -93,10 +91,10 @@ const Navbar = () => {
               </a>
             ))}
             <a
-              href="#تواصل"
+              href="#contact"
               className="block px-4 py-3 mt-4 text-center bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold rounded-lg hover:shadow-lg transition-all duration-300 transform hover:scale-105"
             >
-              ابدأ الآن
+              Get Started
             </a>
           </div>
         )}
