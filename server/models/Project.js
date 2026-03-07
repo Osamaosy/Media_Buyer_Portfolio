@@ -1,17 +1,18 @@
-const mongoose = require('mongoose');
+const { Sequelize, DataTypes } = require('sequelize');
+require('dotenv').config();
 
-const LocalizedStringSchema = new mongoose.Schema({
-  ar: { type: String, required: true },
-  en: { type: String, required: true }
-}, { _id: false });
+const sequelize = new Sequelize(process.env.DATABASE_URL, {
+  dialect: 'postgres',
+  logging: false,
+});
 
-const ProjectSchema = new mongoose.Schema({
-  title: { type: LocalizedStringSchema, required: true },
-  description: { type: LocalizedStringSchema, required: true },
-  image: { type: String, required: true },
-  technologies: [{ type: String }],
-  githubLink: { type: String },
-  liveLink: { type: String }
-}, { timestamps: true });
+const Project = sequelize.define('Project', {
+  title: { type: DataTypes.JSONB, allowNull: false },
+  description: { type: DataTypes.JSONB, allowNull: false },
+  image: { type: DataTypes.STRING, allowNull: false },
+  technologies: { type: DataTypes.ARRAY(DataTypes.STRING) },
+  githubLink: { type: DataTypes.STRING },
+  liveLink: { type: DataTypes.STRING },
+});
 
-module.exports = mongoose.model('Project', ProjectSchema);
+module.exports = { sequelize, Project };
