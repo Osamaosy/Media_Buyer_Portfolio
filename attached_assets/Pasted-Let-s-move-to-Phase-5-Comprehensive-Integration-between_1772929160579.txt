@@ -1,0 +1,27 @@
+Let's move to Phase 5: Comprehensive Integration between the React Frontend and PostgreSQL Backend.
+I have enough tokens, so please be highly detailed and implement a robust integration with proper error handling and fallbacks.
+
+Please execute the following exact steps:
+
+1. **Configure Vite Proxy (`vite.config.ts`):**
+   - Inside the `server` block, add a `proxy` configuration.
+   - Route any request starting with `/api` to `http://localhost:8000`.
+   - Set `changeOrigin: true` and `secure: false`. This is crucial to bypass CORS issues within this cloud IDE environment.
+
+2. **Advanced API Service with Fallbacks (`src/api.ts`):**
+   - Keep the existing bilingual mock data arrays/objects intact inside the file. We will use them as a "Graceful Fallback".
+   - **Update `fetchProjects()`:**
+     - Make a `GET` request to `/api/projects`.
+     - Implement a `try/catch` block.
+     - If the response is successful (`res.ok`), parse and return the JSON data.
+     - If the fetch fails (e.g., backend is booting up or down), execute the `catch` block: log `console.warn("Backend unavailable, falling back to mock projects")` and `return mockProjects`.
+   - **Update `fetchSiteContent()`:**
+     - Make a `GET` request to `/api/content`.
+     - **CRUCIAL DATA TRANSFORMATION:** The PostgreSQL backend returns an array of rows (e.g., `[{ section: 'hero', content: {...} }, { section: 'about', content: {...} }]`). Our React context expects a single object map (e.g., `{ hero: {...}, about: {...} }`). You MUST use `.reduce()` to transform the fetched array into this exact object structure before returning it.
+     - Wrap this entirely in a `try/catch` block. If it fails, log a warning and `return mockSiteContent`.
+
+3. **Verify Environment Execution (Root):**
+   - Ensure that the environment is configured to run BOTH the Vite dev server and the Express backend concurrently. If necessary, verify the workflow configuration so both servers start up.
+
+4. **Preserve UI Integrity:**
+   - Do NOT modify any UI components in `src/pages/` or `src/components/`. The components should remain entirely unaware of whether the data came from the real PostgreSQL DB or the fallback mock data.

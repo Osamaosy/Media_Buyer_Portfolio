@@ -61,107 +61,145 @@ export interface SiteContent {
   };
 }
 
-export const fetchProjects = async (): Promise<Project[]> => {
-  await new Promise((resolve) => setTimeout(resolve, 500));
-  return [
-    {
-      _id: '1',
-      title: { en: 'E-commerce Campaign', ar: 'حملة التجارة الإلكترونية' },
-      description: { en: 'A high-converting meta ads campaign for a fashion brand.', ar: 'حملة إعلانية عالية التحويل لعلامة تجارية للأزياء على منصة ميتا.' },
-      image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&q=80&w=800',
-      technologies: ['Meta Ads', 'Google Analytics', 'Shopify'],
+// Mock data fallback for graceful degradation
+const mockProjects: Project[] = [
+  {
+    _id: '1',
+    title: { en: 'E-commerce Campaign', ar: 'حملة التجارة الإلكترونية' },
+    description: { en: 'A high-converting meta ads campaign for a fashion brand.', ar: 'حملة إعلانية عالية التحويل لعلامة تجارية للأزياء على منصة ميتا.' },
+    image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&q=80&w=800',
+    technologies: ['Meta Ads', 'Google Analytics', 'Shopify'],
+  },
+  {
+    _id: '2',
+    title: { en: 'SaaS Lead Generation', ar: 'توليد العملاء المحتملين لبرمجيات الخدمة' },
+    description: { en: 'B2B lead generation campaign on LinkedIn with 3x ROI.', ar: 'حملة توليد عملاء محتملين B2B على لينكد إن مع عائد استثمار 3 أضعاف.' },
+    image: 'https://images.unsplash.com/photo-1551288049-bbbda5366a7a?auto=format&fit=crop&q=80&w=800',
+    technologies: ['LinkedIn Ads', 'HubSpot', 'Zapier'],
+  },
+];
+
+const mockSiteContent: SiteContent = {
+  hero: {
+    title: { en: 'Media Buyer Pro', ar: 'خبير شراء مساحات إعلانية' },
+    name: { en: 'Elham Mohamed', ar: 'إلهام محمد' },
+    description: { 
+      en: 'I deliver exceptional results through smart, targeted advertising campaigns. With me, you\'ll achieve ROI that far exceeds your expectations.', 
+      ar: 'أقدم نتائج استثنائية من خلال حملات إعلانية ذكية ومستهدفة. معي، ستحقق عائداً على الاستثمار يتجاوز توقعاتك بكثير.' 
     },
-    {
-      _id: '2',
-      title: { en: 'SaaS Lead Generation', ar: 'توليد العملاء المحتملين لبرمجيات الخدمة' },
-      description: { en: 'B2B lead generation campaign on LinkedIn with 3x ROI.', ar: 'حملة توليد عملاء محتملين B2B على لينكد إن مع عائد استثمار 3 أضعاف.' },
-      image: 'https://images.unsplash.com/photo-1551288049-bbbda5366a7a?auto=format&fit=crop&q=80&w=800',
-      technologies: ['LinkedIn Ads', 'HubSpot', 'Zapier'],
-    },
-  ];
+    stats: [
+      { value: '50+', label: { en: 'Happy Clients', ar: 'عميل سعيد' } },
+      { value: '$2M+', label: { en: 'Budget Managed', ar: 'ميزانية مدارة' } },
+      { value: '300%', label: { en: 'Average ROI', ar: 'متوسط العائد' } },
+    ],
+    cta: {
+      primary: { en: 'Get Started', ar: 'ابدأ الآن' },
+      secondary: { en: 'View My Work', ar: 'شاهد أعمالي' },
+    }
+  },
+  about: {
+    title: { en: 'About Me', ar: 'من أنا' },
+    subtitle: { en: 'Specialized in building successful advertising campaigns that deliver real results', ar: 'متخصصة في بناء حملات إعلانية ناجحة تحقق نتائج حقيقية' },
+    paragraphs: [
+      { 
+        en: 'I am a Media Buyer with a strong background in Marketing and Digital Marketing, specialized in planning, executing, and optimizing performance-driven campaigns.', 
+        ar: 'أنا مشتري مساحات إعلانية بخلفية قوية في التسويق والتسويق الرقمي، متخصص في تخطيط وتنفيذ وتحسين الحملات القائمة على الأداء.' 
+      },
+      { 
+        en: 'I specialize in the Egyptian and Saudi markets, managing campaigns with tailored strategies that adapt to each region\'s unique audience behavior.', 
+        ar: 'أتخصص في السوقين المصري والسعودي، وأدير الحملات باستراتيجيات مخصصة تتكيف مع سلوك الجمهور الفريد في كل منطقة.' 
+      }
+    ],
+    stats: [
+      { label: { en: 'Years of Experience', ar: 'سنوات الخبرة' }, value: '7+', percentage: '85%', color: 'blue' },
+      { label: { en: 'Happy Clients', ar: 'عملاء سعداء' }, value: '50+', percentage: '80%', color: 'purple' },
+      { label: { en: 'Success Rate', ar: 'نسبة النجاح' }, value: '95%', percentage: '95%', color: 'green' },
+    ]
+  },
+  services: {
+    title: { en: 'My Services', ar: 'خدماتي' },
+    subtitle: { en: 'Comprehensive suite of specialized services for your advertising campaign success', ar: 'مجموعة شاملة من الخدمات المتخصصة لنجاح حملتك الإعلانية' },
+    items: [
+      { 
+        title: { en: 'Campaign Management', ar: 'إدارة الحملات' }, 
+        description: { en: 'Planning and executing precisely targeted campaigns', ar: 'تخطيط وتنفيذ حملات مستهدفة بدقة' },
+        icon: 'Target'
+      },
+      { 
+        title: { en: 'Performance Analysis', ar: 'تحليل الأداء' }, 
+        description: { en: 'Detailed reports and deep analysis of all campaign aspects', ar: 'تقارير مفصلة وتحليل عميق لجميع جوانب الحملة' },
+        icon: 'BarChart3'
+      }
+    ]
+  },
+  results: {
+    title: { en: 'Results I\'ve Achieved', ar: 'النتائج التي حققتها' },
+    items: [
+      { number: '50+', label: { en: 'Happy Clients', ar: 'عميل سعيد' } },
+      { number: '$2M+', label: { en: 'Budget Managed', ar: 'ميزانية مدارة' } },
+      { number: '300%', label: { en: 'Average ROI', ar: 'متوسط العائد' } },
+      { number: '7+', label: { en: 'Years Experience', ar: 'سنوات خبرة' } }
+    ]
+  },
+  contact: {
+    title: { en: 'Contact Me', ar: 'تواصل معي' },
+    whatsapp: { label: { en: 'WhatsApp', ar: 'واتساب' }, sub: { en: 'Quick & Fast Contact', ar: 'تواص سريع وفوري' } },
+    email: { label: { en: 'Email', ar: 'البريد الإلكتروني' }, value: 'ilham@mediabuyer.com' },
+    facebook: { label: { en: 'Facebook', ar: 'فيسبوك' }, sub: { en: '@ilhammediacontent', ar: '@ilhammediacontent' } },
+    form: {
+      name: { en: 'Your Name', ar: 'اسمك' },
+      email: { en: 'Your Email', ar: 'بريدك الإلكتروني' },
+      message: { en: 'Your Message', ar: 'رسالتك' },
+      button: { en: 'Send Message', ar: 'إرسال الرسالة' }
+    }
+  },
+  footer: {
+    bio: { en: 'Expert in managing digital advertising campaigns and e-marketing', ar: 'خبير في إدارة حملات الإعلانات الرقمية والتسويق الإلكتروني' },
+    linksTitle: { en: 'Quick Links', ar: 'روابط سريعة' },
+    contactTitle: { en: 'Contact Me', ar: 'تواصل معي' },
+    rights: { en: '© 2025 Elham Mohamed - Media Buyer. All Rights Reserved', ar: '© 2025 إلهام محمد - مشتري مساحات إعلانية. جميع الحقوق محفوظة' }
+  }
 };
 
+/**
+ * Fetch projects from the backend API with graceful fallback to mock data
+ */
+export const fetchProjects = async (): Promise<Project[]> => {
+  try {
+    const res = await fetch('/api/projects');
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    return data;
+  } catch (err) {
+    console.warn('Backend unavailable, falling back to mock projects', err);
+    return mockProjects;
+  }
+};
+
+/**
+ * Fetch site content from the backend API with graceful fallback to mock data
+ * Transforms the backend response (single object) into the expected format
+ */
 export const fetchSiteContent = async (): Promise<SiteContent> => {
-  await new Promise((resolve) => setTimeout(resolve, 500));
-  return {
-    hero: {
-      title: { en: 'Media Buyer Pro', ar: 'خبير شراء مساحات إعلانية' },
-      name: { en: 'Elham Mohamed', ar: 'إلهام محمد' },
-      description: { 
-        en: 'I deliver exceptional results through smart, targeted advertising campaigns. With me, you\'ll achieve ROI that far exceeds your expectations.', 
-        ar: 'أقدم نتائج استثنائية من خلال حملات إعلانية ذكية ومستهدفة. معي، ستحقق عائداً على الاستثمار يتجاوز توقعاتك بكثير.' 
-      },
-      stats: [
-        { value: '50+', label: { en: 'Happy Clients', ar: 'عميل سعيد' } },
-        { value: '$2M+', label: { en: 'Budget Managed', ar: 'ميزانية مدارة' } },
-        { value: '300%', label: { en: 'Average ROI', ar: 'متوسط العائد' } },
-      ],
-      cta: {
-        primary: { en: 'Get Started', ar: 'ابدأ الآن' },
-        secondary: { en: 'View My Work', ar: 'شاهد أعمالي' },
-      }
-    },
-    about: {
-      title: { en: 'About Me', ar: 'من أنا' },
-      subtitle: { en: 'Specialized in building successful advertising campaigns that deliver real results', ar: 'متخصصة في بناء حملات إعلانية ناجحة تحقق نتائج حقيقية' },
-      paragraphs: [
-        { 
-          en: 'I am a Media Buyer with a strong background in Marketing and Digital Marketing, specialized in planning, executing, and optimizing performance-driven campaigns.', 
-          ar: 'أنا مشتري مساحات إعلانية بخلفية قوية في التسويق والتسويق الرقمي، متخصص في تخطيط وتنفيذ وتحسين الحملات القائمة على الأداء.' 
-        },
-        { 
-          en: 'I specialize in the Egyptian and Saudi markets, managing campaigns with tailored strategies that adapt to each region\'s unique audience behavior.', 
-          ar: 'أتخصص في السوقين المصري والسعودي، وأدير الحملات باستراتيجيات مخصصة تتكيف مع سلوك الجمهور الفريد في كل منطقة.' 
-        }
-      ],
-      stats: [
-        { label: { en: 'Years of Experience', ar: 'سنوات الخبرة' }, value: '7+', percentage: '85%', color: 'blue' },
-        { label: { en: 'Happy Clients', ar: 'عملاء سعداء' }, value: '50+', percentage: '80%', color: 'purple' },
-        { label: { en: 'Success Rate', ar: 'نسبة النجاح' }, value: '95%', percentage: '95%', color: 'green' },
-      ]
-    },
-    services: {
-      title: { en: 'My Services', ar: 'خدماتي' },
-      subtitle: { en: 'Comprehensive suite of specialized services for your advertising campaign success', ar: 'مجموعة شاملة من الخدمات المتخصصة لنجاح حملتك الإعلانية' },
-      items: [
-        { 
-          title: { en: 'Campaign Management', ar: 'إدارة الحملات' }, 
-          description: { en: 'Planning and executing precisely targeted campaigns', ar: 'تخطيط وتنفيذ حملات مستهدفة بدقة' },
-          icon: 'Target'
-        },
-        { 
-          title: { en: 'Performance Analysis', ar: 'تحليل الأداء' }, 
-          description: { en: 'Detailed reports and deep analysis of all campaign aspects', ar: 'تقارير مفصلة وتحليل عميق لجميع جوانب الحملة' },
-          icon: 'BarChart3'
-        }
-      ]
-    },
-    results: {
-      title: { en: 'Results I\'ve Achieved', ar: 'النتائج التي حققتها' },
-      items: [
-        { number: '50+', label: { en: 'Happy Clients', ar: 'عميل سعيد' } },
-        { number: '$2M+', label: { en: 'Budget Managed', ar: 'ميزانية مدارة' } },
-        { number: '300%', label: { en: 'Average ROI', ar: 'متوسط العائد' } },
-        { number: '7+', label: { en: 'Years Experience', ar: 'سنوات خبرة' } }
-      ]
-    },
-    contact: {
-      title: { en: 'Contact Me', ar: 'تواصل معي' },
-      whatsapp: { label: { en: 'WhatsApp', ar: 'واتساب' }, sub: { en: 'Quick & Fast Contact', ar: 'تواص سريع وفوري' } },
-      email: { label: { en: 'Email', ar: 'البريد الإلكتروني' }, value: 'ilham@mediabuyer.com' },
-      facebook: { label: { en: 'Facebook', ar: 'فيسبوك' }, sub: { en: '@ilhammediacontent', ar: '@ilhammediacontent' } },
-      form: {
-        name: { en: 'Your Name', ar: 'اسمك' },
-        email: { en: 'Your Email', ar: 'بريدك الإلكتروني' },
-        message: { en: 'Your Message', ar: 'رسالتك' },
-        button: { en: 'Send Message', ar: 'إرسال الرسالة' }
-      }
-    },
-    footer: {
-      bio: { en: 'Expert in managing digital advertising campaigns and e-marketing', ar: 'خبير في إدارة حملات الإعلانات الرقمية والتسويق الإلكتروني' },
-      linksTitle: { en: 'Quick Links', ar: 'روابط سريعة' },
-      contactTitle: { en: 'Contact Me', ar: 'تواصل معي' },
-      rights: { en: '© 2025 Elham Mohamed - Media Buyer. All Rights Reserved', ar: '© 2025 إلهام محمد - مشتري مساحات إعلانية. جميع الحقوق محفوظة' }
-    }
-  };
+  try {
+    const res = await fetch('/api/content');
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    
+    // Data transformation: backend returns a single SiteContent object
+    // Ensure all required sections exist with fallback to mock data for missing sections
+    const transformedContent: SiteContent = {
+      hero: data.hero || mockSiteContent.hero,
+      about: data.about || mockSiteContent.about,
+      services: data.services || mockSiteContent.services,
+      results: data.results || mockSiteContent.results,
+      contact: data.contact || mockSiteContent.contact,
+      footer: data.footer || mockSiteContent.footer,
+    };
+    
+    return transformedContent;
+  } catch (err) {
+    console.warn('Backend unavailable, falling back to mock site content', err);
+    return mockSiteContent;
+  }
 };
