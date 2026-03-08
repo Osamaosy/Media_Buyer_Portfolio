@@ -1,0 +1,21 @@
+Let's complete Phase 6: Admin Dashboard Implementation by building both the Project Manager and Content Manager components. Use standard text inputs for images for now (no Cloudinary).
+
+Please update `src/pages/Admin.tsx` (or create separate files in `src/components/admin/`) to implement the following:
+
+1. **ProjectManager Component:**
+   - **State:** `projects` (array), form state (`titleAr`, `titleEn`, `descAr`, `descEn`, `image` URL string, `technologies` comma-separated string, `githubLink`, `liveLink`), and `editingId` (null if creating, ID if editing).
+   - **Fetch:** Use `useEffect` to fetch projects on mount using `fetchProjects()` and set the state.
+   - **Form UI:** A Tailwind-styled form with inputs for all fields. Group AR and EN inputs side-by-side. Submit button changes text based on `editingId` ("Create" vs "Update").
+   - **Actions:** - `handleSubmit`: call `createProject` or `updateProject` from `src/api.ts`. Convert `technologies` string to an array (`.split(',')`). Refresh list and reset form.
+     - `handleDelete(id)`: call `deleteProject(id)` and update state.
+     - `handleEdit(project)`: populate form with project data and set `editingId`.
+   - **List UI:** A grid/table below the form displaying current projects with "Edit" and "Delete" buttons.
+
+2. **ContentManager Component:**
+   - **State:** `siteContent` (object/array), `selectedSection` (string, default to 'hero'), and form state for the currently selected section's AR and EN text.
+   - **Fetch:** Use `useEffect` to fetch content using `fetchSiteContent()`.
+   - **UI:** - A dropdown/select input to choose which section to edit (e.g., 'hero', 'about').
+     - Dynamically render input fields based on the selected section's keys (e.g., `title`, `subtitle`).
+   - **Actions:** `handleSubmit` to call `updateSiteContent(selectedSection, updatedData)` from `api.ts`.
+
+Keep the styling clean, modern, and responsive using Tailwind CSS. Ensure it integrates perfectly with the CRUD functions we created in `src/api.ts`.
