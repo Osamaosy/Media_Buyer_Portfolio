@@ -178,7 +178,6 @@ export const fetchProjects = async (): Promise<Project[]> => {
 
 /**
  * Fetch site content from the backend API with graceful fallback to mock data
- * Transforms the backend response (single object) into the expected format
  */
 export const fetchSiteContent = async (): Promise<SiteContent> => {
   try {
@@ -186,8 +185,6 @@ export const fetchSiteContent = async (): Promise<SiteContent> => {
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
     
-    // Data transformation: backend returns a single SiteContent object
-    // Ensure all required sections exist with fallback to mock data for missing sections
     const transformedContent: SiteContent = {
       hero: data.hero || mockSiteContent.hero,
       about: data.about || mockSiteContent.about,
@@ -201,5 +198,67 @@ export const fetchSiteContent = async (): Promise<SiteContent> => {
   } catch (err) {
     console.warn('Backend unavailable, falling back to mock site content', err);
     return mockSiteContent;
+  }
+};
+
+/**
+ * CRUD Operations
+ */
+
+export const createProject = async (projectData: Omit<Project, '_id'>): Promise<Project> => {
+  try {
+    const res = await fetch('/api/projects', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(projectData),
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    return await res.json();
+  } catch (err) {
+    console.error('Failed to create project:', err);
+    throw err;
+  }
+};
+
+export const updateProject = async (id: number | string, projectData: Partial<Project>): Promise<Project> => {
+  try {
+    const res = await fetch(`/api/projects/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(projectData),
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    return await res.json();
+  } catch (err) {
+    console.error(`Failed to update project ${id}:`, err);
+    throw err;
+  }
+};
+
+export const deleteProject = async (id: number | string): Promise<void> => {
+  try {
+    const res = await fetch(`/api/projects/${id}`, {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  } catch (err) {
+    console.error(`Failed to delete project ${id}:`, err);
+    throw err;
+  }
+};
+
+export const updateSiteContent = async (section: string, contentData: any): Promise<any> => {
+  try {
+    const res = await fetch(`/api/content/${section}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(contentData),
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    return await res.json();
+  } catch (err) {
+    console.error(`Failed to update content section ${section}:`, err);
+    throw err;
   }
 };
