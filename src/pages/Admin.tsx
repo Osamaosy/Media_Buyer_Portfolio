@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Trash2, Edit2, Plus, X } from 'lucide-react';
+import { Trash2, Edit2, Plus, X, LogOut } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import {
   fetchProjects, fetchSiteContent,
   createProject, updateProject, deleteProject, updateSiteContent,
@@ -796,12 +797,26 @@ const ProjectManager: React.FC = () => {
 ───────────────────────────────────────────── */
 const Admin: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'projects' | 'content'>('projects');
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem('admin_token');
+    navigate('/login');
+  };
 
   return (
     <div className="min-h-screen bg-slate-950 text-white pt-20">
-      <div className="bg-gradient-to-r from-blue-600 to-purple-600 py-8 px-6">
-        <h1 className="text-4xl font-bold">Admin Dashboard</h1>
-        <p className="text-blue-100 mt-2">Manage your portfolio and content</p>
+      <div className="bg-gradient-to-r from-blue-600 to-purple-600 py-8 px-6 flex items-center justify-between">
+        <div>
+          <h1 className="text-4xl font-bold">Admin Dashboard</h1>
+          <p className="text-blue-100 mt-2">Manage your portfolio and content</p>
+        </div>
+        <button
+          onClick={handleLogout}
+          className="flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-lg transition text-sm font-medium"
+        >
+          <LogOut size={16} /> Logout
+        </button>
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">

@@ -206,10 +206,20 @@ export const fetchSiteContent = async (): Promise<SiteContent> => {
  * CRUD Operations
  */
 
+const getAuthHeader = (): Record<string, string> => {
+  const token = localStorage.getItem('admin_token');
+  return token ? { Authorization: `Bearer ${token}` } : {};
+};
+
 export const createProject = async (formData: FormData): Promise<Project> => {
   try {
-    // Do NOT set Content-Type — browser sets it with the correct multipart boundary
-    const res = await fetch('/api/projects', { method: 'POST', body: formData });
+    // Do NOT set Content-Type — browser sets multipart boundary automatically.
+    // Only add Authorization header so the boundary is preserved.
+    const res = await fetch('/api/projects', {
+      method: 'POST',
+      headers: { ...getAuthHeader() },
+      body: formData,
+    });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
     return { ...data, _id: data._id ?? String(data.id) };
@@ -221,7 +231,11 @@ export const createProject = async (formData: FormData): Promise<Project> => {
 
 export const updateProject = async (id: number | string, formData: FormData): Promise<Project> => {
   try {
-    const res = await fetch(`/api/projects/${id}`, { method: 'PUT', body: formData });
+    const res = await fetch(`/api/projects/${id}`, {
+      method: 'PUT',
+      headers: { ...getAuthHeader() },
+      body: formData,
+    });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
     return { ...data, _id: data._id ?? String(data.id) };
@@ -235,7 +249,7 @@ export const deleteProject = async (id: number | string): Promise<void> => {
   try {
     const res = await fetch(`/api/projects/${id}`, {
       method: 'DELETE',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', ...getAuthHeader() },
     });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
   } catch (err) {
@@ -248,7 +262,7 @@ export const updateSiteContent = async (section: string, contentData: any): Prom
   try {
     const res = await fetch(`/api/content/${section}`, {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', ...getAuthHeader() },
       body: JSON.stringify(contentData),
     });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);

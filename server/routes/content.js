@@ -1,13 +1,16 @@
 const express = require('express');
 const router = express.Router();
 const SiteContent = require('../models/SiteContent');
+const auth = require('../middleware/auth');
 
+// PUBLIC
 router.get('/', async (req, res) => {
   try { res.json((await SiteContent.findOne()) || {}); }
   catch (err) { res.status(500).json({ message: err.message }); }
 });
 
-router.put('/:section', async (req, res) => {
+// PROTECTED
+router.put('/:section', auth, async (req, res) => {
   try {
     const { section } = req.params;
     let content = await SiteContent.findOne();

@@ -5,6 +5,7 @@ const { sequelize } = require('./models/Project');
 
 const projectRoutes = require('./routes/projects');
 const contentRoutes = require('./routes/content');
+const authRoutes = require('./routes/auth');
 
 const app = express();
 const PORT = process.env.PORT || 8000;
@@ -12,6 +13,7 @@ const PORT = process.env.PORT || 8000;
 app.use(cors());
 app.use(express.json());
 
+app.use('/api/auth', authRoutes);
 app.use('/api/projects', projectRoutes);
 app.use('/api/content', contentRoutes);
 

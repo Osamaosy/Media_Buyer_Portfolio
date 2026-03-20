@@ -2,7 +2,9 @@ const express = require('express');
 const router = express.Router();
 const { Project } = require('../models/Project');
 const { upload } = require('../config/cloudinary');
+const auth = require('../middleware/auth');
 
+// PUBLIC
 router.get('/', async (req, res) => {
   try { res.json(await Project.findAll({ order: [['createdAt', 'DESC']] })); }
   catch (err) { res.status(500).json({ message: err.message }); }
@@ -16,8 +18,8 @@ router.get('/:id', async (req, res) => {
   } catch (err) { res.status(500).json({ message: err.message }); }
 });
 
-// POST - create with optional image upload
-router.post('/', upload.single('image'), async (req, res) => {
+// PROTECTED — require valid JWT
+router.post('/', auth, upload.single('image'), async (req, res) => {
   try {
     const body = req.body;
     const projectData = {
@@ -32,8 +34,7 @@ router.post('/', upload.single('image'), async (req, res) => {
   } catch (err) { res.status(400).json({ message: err.message }); }
 });
 
-// PUT - update with optional image replacement
-router.put('/:id', upload.single('image'), async (req, res) => {
+router.put('/:id', auth, upload.single('image'), async (req, res) => {
   try {
     const p = await Project.findByPk(req.params.id);
     if (!p) return res.status(404).json({ message: 'Not found' });
@@ -54,7 +55,7 @@ router.put('/:id', upload.single('image'), async (req, res) => {
   } catch (err) { res.status(400).json({ message: err.message }); }
 });
 
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', auth, async (req, res) => {
   try {
     const p = await Project.findByPk(req.params.id);
     if (!p) return res.status(404).json({ message: 'Not found' });
