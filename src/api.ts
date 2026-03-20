@@ -206,30 +206,25 @@ export const fetchSiteContent = async (): Promise<SiteContent> => {
  * CRUD Operations
  */
 
-export const createProject = async (projectData: Omit<Project, '_id'>): Promise<Project> => {
+export const createProject = async (formData: FormData): Promise<Project> => {
   try {
-    const res = await fetch('/api/projects', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(projectData),
-    });
+    // Do NOT set Content-Type — browser sets it with the correct multipart boundary
+    const res = await fetch('/api/projects', { method: 'POST', body: formData });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    return await res.json();
+    const data = await res.json();
+    return { ...data, _id: data._id ?? String(data.id) };
   } catch (err) {
     console.error('Failed to create project:', err);
     throw err;
   }
 };
 
-export const updateProject = async (id: number | string, projectData: Partial<Project>): Promise<Project> => {
+export const updateProject = async (id: number | string, formData: FormData): Promise<Project> => {
   try {
-    const res = await fetch(`/api/projects/${id}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(projectData),
-    });
+    const res = await fetch(`/api/projects/${id}`, { method: 'PUT', body: formData });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    return await res.json();
+    const data = await res.json();
+    return { ...data, _id: data._id ?? String(data.id) };
   } catch (err) {
     console.error(`Failed to update project ${id}:`, err);
     throw err;

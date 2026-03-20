@@ -586,9 +586,11 @@ const ProjectManager: React.FC = () => {
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [existingImageUrl, setExistingImageUrl] = useState('');
   const [formData, setFormData] = useState({
     titleAr: '', titleEn: '', descAr: '', descEn: '',
-    image: '', technologies: '', githubLink: '', liveLink: '',
+    technologies: '', githubLink: '', liveLink: '',
   });
 
   useEffect(() => { loadProjects(); }, []);
@@ -605,25 +607,33 @@ const ProjectManager: React.FC = () => {
   };
 
   const handleReset = () => {
-    setFormData({ titleAr: '', titleEn: '', descAr: '', descEn: '', image: '', technologies: '', githubLink: '', liveLink: '' });
+    setFormData({ titleAr: '', titleEn: '', descAr: '', descEn: '', technologies: '', githubLink: '', liveLink: '' });
     setEditingId(null);
+    setImageFile(null);
+    setExistingImageUrl('');
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const projectData = {
-        title: { ar: formData.titleAr, en: formData.titleEn },
-        description: { ar: formData.descAr, en: formData.descEn },
-        image: formData.image,
-        technologies: formData.technologies.split(',').map(t => t.trim()).filter(Boolean),
-        githubLink: formData.githubLink || undefined,
-        liveLink: formData.liveLink || undefined,
-      };
+      const fd = new FormData();
+      fd.append('title', JSON.stringify({ ar: formData.titleAr, en: formData.titleEn }));
+      fd.append('description', JSON.stringify({ ar: formData.descAr, en: formData.descEn }));
+      fd.append('technologies', JSON.stringify(
+        formData.technologies.split(',').map(t => t.trim()).filter(Boolean)
+      ));
+      fd.append('githubLink', formData.githubLink || '');
+      fd.append('liveLink', formData.liveLink || '');
+      if (imageFile) {
+        fd.append('image', imageFile);
+      } else if (existingImageUrl) {
+        fd.append('image', existingImageUrl);
+      }
+
       if (editingId) {
-        await updateProject(editingId, projectData);
+        await updateProject(editingId, fd);
       } else {
-        await createProject(projectData);
+        await createProject(fd);
       }
       await loadProjects();
       handleReset();
@@ -639,12 +649,13 @@ const ProjectManager: React.FC = () => {
       titleEn: project.title.en,
       descAr: project.description.ar,
       descEn: project.description.en,
-      image: project.image,
       technologies: (project.technologies || []).join(', '),
       githubLink: project.githubLink || '',
       liveLink: project.liveLink || '',
     });
     setEditingId(project._id);
+    setImageFile(null);
+    setExistingImageUrl(project.image || '');
   };
 
   const handleDelete = async (id: string) => {
@@ -690,9 +701,22 @@ const ProjectManager: React.FC = () => {
             </div>
           </div>
           <div>
-            <label className={labelCls}>Image URL</label>
-            <input type="url" value={formData.image} required className={inputCls}
-              onChange={e => setFormData({ ...formData, image: e.target.value })} />
+            <label className={labelCls}>Project Image</label>
+            <input
+              type="file"
+              accept="image/*"
+              className={`${inputCls} file:mr-3 file:py-1 file:px-3 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700 cursor-pointer`}
+              onChange={e => setImageFile(e.target.files?.[0] ?? null)}
+            />
+            {existingImageUrl && !imageFile && (
+              <div className="mt-2">
+                <p className="text-xs text-gray-400 mb-1">Current image:</p>
+                <img src={existingImageUrl} alt="current" className="h-20 rounded object-cover border border-slate-600" />
+              </div>
+            )}
+            {imageFile && (
+              <p className="text-xs text-green-400 mt-1">New file selected: {imageFile.name}</p>
+            )}
           </div>
           <div>
             <label className={labelCls}>Technologies (comma-separated)</label>

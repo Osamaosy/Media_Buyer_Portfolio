@@ -1,0 +1,25 @@
+Listen carefully. I have very limited prompts left, so we MUST execute two critical tasks flawlessly in this single prompt: Fixing the broken UI across the ENTIRE site, and implementing Cloudinary.
+
+TASK 1: RESTORE FRONTEND UI DESIGN FOR ALL SECTIONS
+When we made the content dynamic, the original Tailwind CSS design, grid layouts, and beautiful cards broke. 
+- You MUST restore the exact original Tailwind HTML structure, cards, icons, and layouts for ALL of the following components: `Hero`, `About`, `Services`, `Results`, `Projects`, `Contact`, and `Footer`.
+- The hardcoded design shells and Tailwind classes MUST remain static. ONLY the text values inside them should be dynamically injected from `useLanguage()` and the context.
+- When mapping over arrays (like `services` or `stats`), ensure the `.map()` returns the exact beautifully styled Tailwind card component we originally had, not a plain or stripped-down div. Do not strip out ANY styles!
+
+TASK 2: PHASE 7 - CLOUDINARY INTEGRATION
+Implement image uploads for the ProjectManager.
+1. **Backend Setup:**
+   - In `server`, install: `cloudinary multer multer-storage-cloudinary`.
+   - Create `server/config/cloudinary.js`: Setup Cloudinary using `process.env.CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, and `CLOUDINARY_API_SECRET`. Export a `multer` upload middleware configured with `CloudinaryStorage` (folder: 'portfolio').
+2. **Backend Routes (`server/routes/projects.js`):**
+   - Import the `upload` middleware.
+   - Update `POST /` to use `upload.single('image')`. Save `req.file.path` as the image URL in the DB along with `req.body`.
+   - Update `PUT /:id` to use `upload.single('image')`. Update the image only if `req.file` exists.
+3. **Frontend API (`src/api.ts`):**
+   - Modify `createProject` and `updateProject` to accept `FormData`. 
+   - CRITICAL: Remove `Content-Type: application/json` from these fetch calls so the browser automatically sets the correct `multipart/form-data` boundary.
+4. **Frontend Form (`src/pages/Admin.tsx` - ProjectManager):**
+   - Change the image input to `<input type="file" accept="image/*" />`.
+   - Update `handleSubmit` to build a `FormData` object. Append all project fields (ar/en) and the selected file. Send this `FormData` to the API.
+
+Please execute this perfectly. The UI must look perfectly styled again, and the image upload must work backend-to-frontend.
