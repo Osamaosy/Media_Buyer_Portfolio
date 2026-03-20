@@ -169,7 +169,8 @@ export const fetchProjects = async (): Promise<Project[]> => {
     const res = await fetch('/api/projects');
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
-    return data;
+    // Normalize PostgreSQL `id` -> `_id` so components work consistently
+    return data.map((p: any) => ({ ...p, _id: p._id ?? String(p.id) }));
   } catch (err) {
     console.warn('Backend unavailable, falling back to mock projects', err);
     return mockProjects;
