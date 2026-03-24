@@ -6,7 +6,7 @@ import './index.css'
 import App from './App.tsx'
 import Admin from './pages/Admin.tsx'
 import Login from './pages/Login.tsx'
-import { LanguageProvider } from './context/LanguageContext'
+import { LanguageProvider } from './context/LanguageContext.tsx'
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const token = localStorage.getItem('admin_token');
