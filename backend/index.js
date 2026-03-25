@@ -27,7 +27,6 @@ const startServer = async () => {
     await sequelize.authenticate();
     console.log('✅ PostgreSQL Connected.');
 
-    // جعل الـ sync يعمل في كل البيئات لتحديث الجداول
     await sequelize.sync({ alter: true });
     console.log("Database synced! ✅");
 
