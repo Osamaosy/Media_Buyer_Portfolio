@@ -160,16 +160,16 @@ const mockSiteContent: SiteContent = {
     rights: { en: '© 2025 Elham Mohamed - Media Buyer. All Rights Reserved', ar: '© 2025 إلهام محمد - مشتري مساحات إعلانية. جميع الحقوق محفوظة' }
   }
 };
+const API_URL = import.meta.env.VITE_API_URL || '';
 
 /**
  * Fetch projects from the backend API with graceful fallback to mock data
  */
 export const fetchProjects = async (): Promise<Project[]> => {
   try {
-    const res = await fetch('/api/projects');
+    const res = await fetch(`${API_URL}/api/projects`);
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
-    // Normalize PostgreSQL `id` -> `_id` so components work consistently
     return data.map((p: any) => ({ ...p, _id: p._id ?? String(p.id) }));
   } catch (err) {
     console.warn('Backend unavailable, falling back to mock projects', err);
@@ -182,7 +182,7 @@ export const fetchProjects = async (): Promise<Project[]> => {
  */
 export const fetchSiteContent = async (): Promise<SiteContent> => {
   try {
-    const res = await fetch('/api/content');
+    const res = await fetch(`${API_URL}/api/content`);
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
     
@@ -213,9 +213,7 @@ const getAuthHeader = (): Record<string, string> => {
 
 export const createProject = async (formData: FormData): Promise<Project> => {
   try {
-    // Do NOT set Content-Type — browser sets multipart boundary automatically.
-    // Only add Authorization header so the boundary is preserved.
-    const res = await fetch('/api/projects', {
+    const res = await fetch(`${API_URL}/api/projects`, {
       method: 'POST',
       headers: { ...getAuthHeader() },
       body: formData,
@@ -231,7 +229,7 @@ export const createProject = async (formData: FormData): Promise<Project> => {
 
 export const updateProject = async (id: number | string, formData: FormData): Promise<Project> => {
   try {
-    const res = await fetch(`/api/projects/${id}`, {
+    const res = await fetch(`${API_URL}/api/projects/${id}`, {
       method: 'PUT',
       headers: { ...getAuthHeader() },
       body: formData,
@@ -247,7 +245,7 @@ export const updateProject = async (id: number | string, formData: FormData): Pr
 
 export const deleteProject = async (id: number | string): Promise<void> => {
   try {
-    const res = await fetch(`/api/projects/${id}`, {
+    const res = await fetch(`${API_URL}/api/projects/${id}`, {
       method: 'DELETE',
       headers: { 'Content-Type': 'application/json', ...getAuthHeader() },
     });
@@ -260,7 +258,7 @@ export const deleteProject = async (id: number | string): Promise<void> => {
 
 export const updateSiteContent = async (section: string, contentData: any): Promise<any> => {
   try {
-    const res = await fetch(`/api/content/${section}`, {
+    const res = await fetch(`${API_URL}/api/content/${section}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json', ...getAuthHeader() },
       body: JSON.stringify(contentData),
