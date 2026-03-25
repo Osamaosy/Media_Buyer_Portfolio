@@ -14,14 +14,22 @@ router.put('/:section', auth, async (req, res) => {
   try {
     const { section } = req.params;
     let content = await SiteContent.findOne();
+    
     if (!content) {
+      // إذا كان أول سجل، نقوم بإنشائه بالقسم المطلوب فقط
       content = await SiteContent.create({ [section]: req.body });
     } else {
+      // تحديث القسم المحدد فقط
       content[section] = req.body;
+      // إخبار Sequelize أن هذا الحقل (JSONB) قد تغير ليتم حفظه
+      content.changed(section, true); 
       await content.save();
     }
     res.json(content);
-  } catch (err) { res.status(400).json({ message: err.message }); }
+  } catch (err) { 
+    console.error(err);
+    res.status(400).json({ message: err.message }); 
+  }
 });
 
 module.exports = router;
