@@ -10,18 +10,44 @@ const authRoutes = require('./routes/auth');
 const app = express();
 const PORT = process.env.PORT || 8000;
 
+// Middleware
 app.use(cors());
 app.use(express.json());
 
+// Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/projects', projectRoutes);
 app.use('/api/content', contentRoutes);
 
-app.get('/', (req, res) => res.send('API is running...'));
+// Health Check Route
+app.get('/', (req, res) => res.send('API is running on Vercel... 🚀'));
 
-sequelize.sync().then(() => {
-  console.log('PostgreSQL synced');
-  app.listen(PORT, '0.0.0.0', () => {
-    console.log(`Server is running on http://0.0.0.0:${PORT}`);
-  });
-}).catch(err => console.error('Sequelize sync error:', err));
+// Database Connection & Server Initialization
+const startServer = async () => {
+  try {
+    // التأكد من الاتصال بقاعدة بيانات Neon
+    await sequelize.authenticate();
+    console.log('✅ PostgreSQL Connected successfully.');
+
+    // في بيئة Serverless مثل Vercel، لا نحتاج لعمل sync في كل طلب
+    // ولكن لضمان وجود الجداول في أول مرة، نتركها بشرط بسيط
+    if (process.env.NODE_ENV === 'development') {
+      await sequelize.sync();
+      console.log('✅ Database Models Synced.');
+    }
+
+    // التشغيل المحلي فقط (Localhost)
+    if (process.env.NODE_ENV !== 'production') {
+      app.listen(PORT, () => {
+        console.log(`🚀 Server is running on http://localhost:${PORT}`);
+      });
+    }
+  } catch (err) {
+    console.error('❌ Database connection error:', err);
+  }
+};
+
+startServer();
+
+// هذا السطر هو الأهم لعمل Vercel
+module.exports = app;
