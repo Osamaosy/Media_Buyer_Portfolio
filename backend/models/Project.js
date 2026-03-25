@@ -1,9 +1,17 @@
 const { Sequelize, DataTypes } = require('sequelize');
+const pg = require('pg'); // <-- 1. استدعاء مكتبة pg يدوياً
 require('dotenv').config();
 
 const sequelize = new Sequelize(process.env.DATABASE_URL, {
   dialect: 'postgres',
+  dialectModule: pg, // <-- 2. إجبار Sequelize على استخدام المكتبة
   logging: false,
+  dialectOptions: {
+    ssl: {
+      require: true, // <-- 3. مطلوب لقواعد بيانات Neon
+      rejectUnauthorized: false
+    }
+  }
 });
 
 const Project = sequelize.define('Project', {
