@@ -3,7 +3,7 @@ const cors = require('cors');
 require('dotenv').config();
 const { sequelize } = require('./models/Project');
 
-// 1. استيراد الموديلات يدوياً للتأكد من أن Sequelize "يراها"
+// استدعاء الموديلات مهم جداً هنا
 require('./models/Project');
 require('./models/SiteContent'); 
 
@@ -12,8 +12,6 @@ const contentRoutes = require('./routes/content');
 const authRoutes = require('./routes/auth');
 
 const app = express();
-const PORT = process.env.PORT || 8000;
-
 app.use(cors());
 app.use(express.json());
 
@@ -26,13 +24,12 @@ app.get('/', (req, res) => res.send('API is running... 🚀'));
 const startServer = async () => {
   try {
     await sequelize.authenticate();
-    console.log('✅ PostgreSQL Connected.');
-
-    // 2. تفعيل المزامنة في كل البيئات لإنشاء الجداول المفقودة
+    // السطر ده هو السر.. لازم يشتغل في الـ Production عشان ينشئ الجدول اللي مسحناه
     await sequelize.sync({ alter: true });
-    console.log("✅ Database synced and tables created.");
+    console.log("✅ Database Synced Successfully");
 
     if (process.env.NODE_ENV !== 'production') {
+      const PORT = process.env.PORT || 8000;
       app.listen(PORT, () => console.log(`🚀 Server on port ${PORT}`));
     }
   } catch (err) {
@@ -41,5 +38,4 @@ const startServer = async () => {
 };
 
 startServer();
-
 module.exports = app;
