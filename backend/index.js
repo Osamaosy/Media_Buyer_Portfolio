@@ -3,6 +3,9 @@ const cors = require('cors');
 require('dotenv').config();
 const { sequelize } = require('./models/Project');
 
+// استيراد الموديلات لضمان تسجيلها قبل الـ Sync
+require('./models/SiteContent'); 
+
 const projectRoutes = require('./routes/projects');
 const contentRoutes = require('./routes/content');
 const authRoutes = require('./routes/auth');
@@ -10,40 +13,31 @@ const authRoutes = require('./routes/auth');
 const app = express();
 const PORT = process.env.PORT || 8000;
 
-// Middleware
 app.use(cors());
 app.use(express.json());
 
-// Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/projects', projectRoutes);
 app.use('/api/content', contentRoutes);
 
-// Health Check Route
-app.get('/', (req, res) => res.send('API is running on Vercel... 🚀'));
+app.get('/', (req, res) => res.send('API is running... 🚀'));
 
-// Database Connection & Server Initialization
 const startServer = async () => {
   try {
     await sequelize.authenticate();
-    console.log('✅ PostgreSQL Connected successfully.');
+    console.log('✅ PostgreSQL Connected.');
 
-    if (process.env.NODE_ENV === 'development') {
-      await sequelize.sync();
-      console.log('✅ Database Models Synced.');
-    }
+    // جعل الـ sync يعمل في كل البيئات لتحديث الجداول
+    await sequelize.sync({ alter: true });
+    console.log("Database synced! ✅");
 
-    // التشغيل المحلي فقط (Localhost)
     if (process.env.NODE_ENV !== 'production') {
-      app.listen(PORT, () => {
-        console.log(`🚀 Server is running on http://localhost:${PORT}`);
-      });
+      app.listen(PORT, () => console.log(`🚀 Port: ${PORT}`));
     }
   } catch (err) {
-    console.error('❌ Database connection error:', err);
+    console.error('❌ DB Error:', err);
   }
 };
 
 startServer();
-
 module.exports = app;
