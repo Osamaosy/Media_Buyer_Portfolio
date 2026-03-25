@@ -32,7 +32,7 @@ const Footer = () => {
           <div>
             <h3 className="text-white font-bold mb-4">{content.contactTitle[language]}</h3>
             <div className="flex space-x-4 rtl:space-x-reverse">
-              <a href="https://wa.me/201234567890" className="hover:text-blue-400"><MessageCircle size={20} /></a>
+              <a href="https://wa.me/20102 3578478" className="hover:text-blue-400"><MessageCircle size={20} /></a>
               <a href="https://facebook.com" className="hover:text-blue-400"><Facebook size={20} /></a>
               <a href="https://instagram.com" className="hover:text-blue-400"><Instagram size={20} /></a>
             </div>

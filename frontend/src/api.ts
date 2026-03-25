@@ -160,8 +160,8 @@ const mockSiteContent: SiteContent = {
     rights: { en: '© 2025 Elham Mohamed - Media Buyer. All Rights Reserved', ar: '© 2025 إلهام محمد - مشتري مساحات إعلانية. جميع الحقوق محفوظة' }
   }
 };
-const API_URL = import.meta.env.VITE_API_URL || '';
-
+// احذف السطر القديم اللي فيه import.meta.env وحط ده مكانه
+const API_URL = "https://backend-portfolio-one-theta.vercel.app";
 /**
  * Fetch projects from the backend API with graceful fallback to mock data
  */

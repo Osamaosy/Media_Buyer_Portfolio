@@ -34,7 +34,7 @@ const Contact = () => {
       <div className="max-w-6xl mx-auto px-4">
         <h2 className="text-4xl font-bold mb-12 text-center">{content.title[language]}</h2>
         <div className="grid md:grid-cols-3 gap-8 mb-12">
-          <a href="https://wa.me/201234567890" className="bg-slate-700 p-8 rounded-lg text-center hover:bg-green-600 transition">
+          <a href="https://wa.me/201023578478" className="bg-slate-700 p-8 rounded-lg text-center hover:bg-green-600 transition">
             <MessageCircle size={40} className="mx-auto mb-4 text-green-400" />
             <h3 className="font-bold mb-2">{content.whatsapp.label[language]}</h3>
             <p className="text-gray-300">{content.whatsapp.sub[language]}</p>
