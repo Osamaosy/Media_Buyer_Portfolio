@@ -22,17 +22,18 @@ app.use('/api/content', contentRoutes);
 // Health Check Route
 app.get('/', (req, res) => res.send('API is running on Vercel... 🚀'));
 
-// Database Connection & Sync
+// Database Connection & Server Initialization
 const startServer = async () => {
   try {
     await sequelize.authenticate();
     console.log('✅ PostgreSQL Connected successfully.');
 
-    // جعلنا الـ sync يعمل في الـ Production أيضاً لتحديث الجدول في Neon
-    await sequelize.sync({ alter: true });
-    console.log("Database synced and altered! ✅");
+    if (process.env.NODE_ENV === 'development') {
+      await sequelize.sync();
+      console.log('✅ Database Models Synced.');
+    }
 
-    // تشغيل السيرفر فقط إذا لم نكن على Vercel (لأن Vercel لا يحتاج listen)
+    // التشغيل المحلي فقط (Localhost)
     if (process.env.NODE_ENV !== 'production') {
       app.listen(PORT, () => {
         console.log(`🚀 Server is running on http://localhost:${PORT}`);
