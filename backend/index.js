@@ -25,12 +25,9 @@ app.get('/', (req, res) => res.send('API is running on Vercel... 🚀'));
 // Database Connection & Server Initialization
 const startServer = async () => {
   try {
-    // التأكد من الاتصال بقاعدة بيانات Neon
     await sequelize.authenticate();
     console.log('✅ PostgreSQL Connected successfully.');
 
-    // في بيئة Serverless مثل Vercel، لا نحتاج لعمل sync في كل طلب
-    // ولكن لضمان وجود الجداول في أول مرة، نتركها بشرط بسيط
     if (process.env.NODE_ENV === 'development') {
       await sequelize.sync();
       console.log('✅ Database Models Synced.');
@@ -49,5 +46,4 @@ const startServer = async () => {
 
 startServer();
 
-// هذا السطر هو الأهم لعمل Vercel
 module.exports = app;
